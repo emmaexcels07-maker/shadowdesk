@@ -1,8 +1,11 @@
-import { PrismaConfig } from '@prisma/client/edge';
+import { PrismaClient } from "@prisma/client";
 
-export const prismaConfig: PrismaConfig = {
-  datasource: {
-    provider: 'postgresql',
-    url: process.env.DATABASE_URL, // Must be defined in .env
+const DATABASE_URL = process.env.DATABASE_URL;
+
+export const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: DATABASE_URL,
+    },
   },
-};
+});

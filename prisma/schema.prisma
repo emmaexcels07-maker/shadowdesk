@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  // url is no longer here in Prisma 7+
 }
 
 model Task {

@@ -1,4 +1,4 @@
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../../prisma/prisma.config";
 import { z } from "zod";
 import { NextResponse } from "next/server";
 
