@@ -3,11 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } // <-- Promise
 ) {
+  const { id } = await params; // <-- await it
+
   try {
     const task = await prisma.task.update({
-      where: { id: params.id },
+      where: { id },
       data: { completed: true },
     });
     return NextResponse.json(task);
@@ -18,10 +20,12 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } // <-- Promise
 ) {
+  const { id } = await params; // <-- await it
+
   try {
-    await prisma.task.delete({ where: { id: params.id } });
+    await prisma.task.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (err) {
     return NextResponse.json({ error: "Task not found" }, { status: 404 });
