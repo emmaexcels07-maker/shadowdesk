@@ -1,4 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import * as PrismaClientPkg from "@prisma/client";
+
+const PrismaClient =
+  (PrismaClientPkg as any).PrismaClient ||
+  (PrismaClientPkg as any).default ||
+  PrismaClientPkg;
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
