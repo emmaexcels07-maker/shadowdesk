@@ -7,12 +7,24 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const { email } = schema.parse(body);
+  try {
+    const body = await req.json();
+    const { email } = schema.parse(body);
 
-  await prisma.subscriber.create({
-    data: { email },
-  });
+    const subscriber = await prisma.subscriber.create({
+      data: { email },
+    });
 
-  return NextResponse.json({ success: true });
+    return NextResponse.json(
+      { success: true, subscriber },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      { error: "Failed to subscribe." },
+      { status: 400 }
+    );
+  }
 }

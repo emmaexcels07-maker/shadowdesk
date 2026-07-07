@@ -1,26 +1,12 @@
-import PrismaClientPkg from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
-type PrismaClientConstructor = new (...args: readonly unknown[]) => {
-  $disconnect: () => Promise<void>;
+const globalForPrisma = globalThis as {
+  prisma?: PrismaClient;
 };
 
-type PrismaClientPackage = {
-  PrismaClient?: PrismaClientConstructor;
-  default?: PrismaClientConstructor;
-};
+export const prisma =
+  globalForPrisma.prisma ?? new PrismaClient();
 
-const prismaClientPkg = PrismaClientPkg as unknown as PrismaClientPackage;
-const PrismaClient =
-  prismaClientPkg.PrismaClient ||
-  prismaClientPkg.default ||
-  (PrismaClientPkg as unknown as PrismaClientConstructor);
-
-const DATABASE_URL = process.env.DATABASE_URL;
-
-export const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: DATABASE_URL,
-    },
-  },
-});
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+}
