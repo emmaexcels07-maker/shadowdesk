@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> } // <-- Promise
+  { params }: { params: { id: string } }
 ) {
-  const { id } = await params; // <-- await it
+  const { id } = params;
 
   try {
     const task = await prisma.task.update({
@@ -13,21 +13,23 @@ export async function PUT(
       data: { completed: true },
     });
     return NextResponse.json(task);
-  } catch (err) {
+  } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: "Task not found" }, { status: 404 });
   }
 }
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> } // <-- Promise
+  { params }: { params: { id: string } }
 ) {
-  const { id } = await params; // <-- await it
+  const { id } = params;
 
   try {
     await prisma.task.delete({ where: { id } });
     return NextResponse.json({ success: true });
-  } catch (err) {
+  } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: "Task not found" }, { status: 404 });
   }
 }
