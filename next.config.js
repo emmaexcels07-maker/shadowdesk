@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Tell Turbopack NOT to bundle or resolve these native dependencies
+  // Directly instruct Turbopack to leave these packages entirely to the runtime environment
   serverExternalPackages: ["@prisma/client", "@prisma/adapter-pg", "pg"],
 };
 

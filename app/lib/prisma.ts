@@ -1,57 +1,31 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 
 const globalForPrisma = globalThis as {
   prisma?: PrismaClient;
 };
 
-// 1. We declare a proxy helper rather than evaluating the client immediately
-let prismaInstance: PrismaClient | null = null;
+let prisma: PrismaClient;
 
-async function getPrismaClient(): Promise<PrismaClient> {
-  if (prismaInstance) return prismaInstance;
-  if (globalForPrisma.prisma) {
-    prismaInstance = globalForPrisma.prisma;
-    return prismaInstance;
-  }
-
+if (globalForPrisma.prisma) {
+  prisma = globalForPrisma.prisma;
+} else {
+  // If we are at server runtime and have a DB connection URL
   if (typeof window === "undefined" && process.env.DATABASE_URL) {
-    // 2. Pure runtime runtime dynamic imports. 
-    // This splits the code chunk away from the Turbopack build collector entirely.
-    const [{ Pool }, { PrismaPg }] = await Promise.all([
-      import("pg"),
-      import("@prisma/adapter-pg"),
-    ]);
-
     const pool = new Pool({ connectionString: process.env.DATABASE_URL });
     const adapter = new PrismaPg(pool);
-    
-    prismaInstance = new PrismaClient({ adapter });
+    prisma = new PrismaClient({ adapter });
   } else {
-    // Fallback block so page collectors/pre-renderers initialize happily 
-    prismaInstance = new PrismaClient({
-      datasourceUrl: "postgresql://placeholder:placeholder@localhost:5432/db",
+    // Structural fallback so page generation workers do not throw a constructor exception
+    prisma = new PrismaClient({
+      accelerateUrl: "prisma://bootstrap-placeholder.prisma-hq.com/?api_key=mock"
     });
   }
 
   if (process.env.NODE_ENV !== "production") {
-    globalForPrisma.prisma = prismaInstance;
+    globalForPrisma.prisma = prisma;
   }
-
-  return prismaInstance;
 }
 
-// 3. Export a type-safe Proxy. Your API routes can continue using 
-// `import { prisma } from "@/app/lib/prisma"` without modifying any route logic.
-export const prisma = new Proxy({} as PrismaClient, {
-  get(target, prop, receiver) {
-    // Handle promises/thenable checking internally by Next.js
-    if (prop === "then") return undefined;
-    
-    // Trap any method calls (like prisma.task.findMany) and route them lazily
-    return (...args: any[]) => {
-      return getPrismaClient().then((client) => {
-        return (client as any)[prop](...args);
-      });
-    };
-  },
-});
+export { prisma };
