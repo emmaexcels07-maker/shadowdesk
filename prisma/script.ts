@@ -1,5 +1,5 @@
 // Import the singleton instance instead of creating a new one
-import { prisma } from "./prisma"; 
+import { prisma } from "../app/lib/prisma"; 
 
 async function main() {
   const task = await prisma.task.create({
