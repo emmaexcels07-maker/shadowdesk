@@ -18,3 +18,5 @@ model Subscriber {
   email     String   @unique
   createdAt DateTime @default(now())
 }
+
+

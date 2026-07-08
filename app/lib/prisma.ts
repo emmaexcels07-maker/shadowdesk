@@ -1,14 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 
-type PrismaClientConstructor = new (...args: readonly unknown[]) => {
-  $disconnect: () => Promise<void>;
-};
-
-type PrismaClientPackage = {
-  PrismaClient?: PrismaClientConstructor;
-  default?: PrismaClientConstructor;
-};
-
 const globalForPrisma = globalThis as {
   prisma?: PrismaClient;
 };
