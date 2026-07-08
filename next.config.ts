@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Tell Turbopack NOT to bundle or resolve these native dependencies
+  serverExternalPackages: ["@prisma/client", "@prisma/adapter-pg", "pg"],
 };
 
 export default nextConfig;
