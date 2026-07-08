@@ -1,24 +1,15 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+// Import the singleton instance instead of creating a new one
+import { prisma } from "./prisma"; 
 
 async function main() {
-  // Create a task
   const task = await prisma.task.create({
-    data: {
-      title: "Finish Prisma 7 setup",
-    },
+    data: { title: "Finish Prisma 7 setup" },
   });
-
   console.log("Created Task:", task);
 
-  // Create a subscriber
   const subscriber = await prisma.subscriber.create({
-    data: {
-      email: "test@example.com",
-    },
+    data: { email: "test@example.com" },
   });
-
   console.log("Created Subscriber:", subscriber);
 }
 
@@ -28,5 +19,6 @@ main()
     process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect();
+    // Optional for long-running apps, but good practice for short-lived scripts
+    await prisma.$disconnect(); 
   });
