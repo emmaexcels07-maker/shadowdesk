@@ -1,22 +1,68 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
+:root {
+  /* Premium, crisp light mode (if needed) */
+  --background: #f8fafc; /* slate-50 */
+  --foreground: #0f172a; /* slate-900 */
+  
+  /* Shared smooth transit curves across the application */
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Rich, high-end "Midnight Blue" instead of raw harsh black */
+    --background: #020617; /* slate-950 */
+    --foreground: #f1f5f9; /* slate-100 */
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Global resets for a high-fidelity application feel */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Smooth, premium hardware-accelerated scrolling transitions */
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom subtle scrollbar styling for a high-end web app feel */
+/* Custom Minimalist Premium Scrollbars */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #0B0F19;
+  background: var(--background);
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
-  border-radius: 4px;
+  background: #1e293b; /* slate-800 */
+  border-radius: 9999px;
+  border: 2px solid var(--background);
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #334155; /* slate-700 */
+}
+
+/* Utility keyframes helper injected for input or alert fade-ins */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s var(--ease-premium) forwards;
 }
